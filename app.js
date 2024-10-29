@@ -4,16 +4,17 @@ const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import cors
+const cors = require('cors');
 
 const app = express();
 
-app.use(cors()); // Enable CORS for all routes
+app.use(cors());
 app.use(bodyParser.json());
 
 mongoose.connect('mongodb+srv://ishana821:P2vL4YzHXI3exPNF@employees.fzvia.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true
 });
 
 const db = mongoose.connection;
@@ -22,8 +23,16 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-const dataSchema = new mongoose.Schema({}, { strict: false });
-const data = mongoose.model('data', dataSchema);
+const dataSchema = new mongoose.Schema(
+  {
+    emp_id: { type: String, unique: true },
+    name: String,
+    profession: String,
+  },
+  { strict: false }
+);
+
+const Data = mongoose.model('Data', dataSchema);
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -39,23 +48,27 @@ app.post('/upload-csv-file', upload.single('file'), (req, res) => {
     .on('data', (row) => {
       fileRows.push(row);
     })
-    .on('end', () => {
-      data.insertMany(fileRows)
-        .then(() => {
-          res.status(200).json({ message: 'File data uploaded successfully' });
-        })
-        .catch((error) => {
-          res.status(500).json({ message: 'Error saving data', error });
-        })
-        .finally(() => {
-          fs.unlinkSync(req.file.path);
-        });
+    .on('end', async () => {
+      try {
+        for (const row of fileRows) {
+          await Data.findOneAndUpdate(
+            { emp_id: row.emp_id },
+            row,
+            { upsert: true, new: true } 
+          );
+        }
+        res.status(200).json({ message: 'File data uploaded successfully, duplicates avoided' });
+      } catch (error) {
+        res.status(500).json({ message: 'Error saving data', error });
+      } finally {
+        fs.unlinkSync(req.file.path);
+      }
     });
 });
 
 app.get('/get-all-data', async (req, res) => {
   try {
-    const getData = await data.find({});
+    const getData = await Data.find({});
     res.status(200).json(getData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data', error });
