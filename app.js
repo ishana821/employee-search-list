@@ -4,11 +4,14 @@ const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Import cors
 
 const app = express();
+
+app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/mydatabase', {
+mongoose.connect('mongodb+srv://ishana821:P2vL4YzHXI3exPNF@employees.fzvia.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -20,7 +23,7 @@ db.once('open', () => {
 });
 
 const dataSchema = new mongoose.Schema({}, { strict: false });
-const Data = mongoose.model('Data', dataSchema);
+const data = mongoose.model('data', dataSchema);
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -37,7 +40,7 @@ app.post('/upload-csv-file', upload.single('file'), (req, res) => {
       fileRows.push(row);
     })
     .on('end', () => {
-      Data.insertMany(fileRows)
+      data.insertMany(fileRows)
         .then(() => {
           res.status(200).json({ message: 'File data uploaded successfully' });
         })
@@ -52,8 +55,8 @@ app.post('/upload-csv-file', upload.single('file'), (req, res) => {
 
 app.get('/get-all-data', async (req, res) => {
   try {
-    const data = await Data.find({});
-    res.status(200).json(data);
+    const getData = await data.find({});
+    res.status(200).json(getData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data', error });
   }
