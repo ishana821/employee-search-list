@@ -5,13 +5,14 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://ishana821:P2vL4YzHXI3exPNF@employees.fzvia.mongodb.net/', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true
