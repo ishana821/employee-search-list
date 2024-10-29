@@ -1,0 +1,17 @@
+{
+    "name": "express-mongodb-api",
+    "version": "1.0.0",
+    "description": "API for uploading CSV files and retrieving data from MongoDB",
+    "main": "app.js",
+    "scripts": {
+      "start": "node test.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "mongoose": "^5.12.3",
+      "multer": "^1.4.2",
+      "csv-parser": "^3.0.0"
+    },
+    "author": "ishan",
+    "license": "ISC"
+  }
