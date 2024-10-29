@@ -2,7 +2,7 @@
     "name": "express-mongodb-api",
     "version": "1.0.0",
     "description": "API for uploading CSV files and retrieving data from MongoDB",
-    "main": "app.js",
+    "main": "test.js",
     "scripts": {
       "start": "node test.js"
     },
