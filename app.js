@@ -76,6 +76,15 @@ app.get('/get-all-data', async (req, res) => {
   }
 });
 
+app.delete('/delete-all-data', async (req, res) => {
+  try {
+    await Data.deleteMany({});
+    res.status(200).json({ message: 'All data deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting data', error });
+  }
+});
+
 app.get('/health', async (req, res) => {
   try {
     res.status(200).json({ message: 'health is okay'});
