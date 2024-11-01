@@ -38,9 +38,9 @@ const Data = mongoose.model('Data', dataSchema);
 const upload = multer({ dest: 'uploads/' });
 
 app.post('/upload-csv-file', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'Please upload a file' });
-  }
+  // if (!req.file) {
+  //   return res.status(400).json({ message: 'Please upload a file' });
+  // }
 
   const fileRows = [];
 
@@ -58,9 +58,10 @@ app.post('/upload-csv-file', upload.single('file'), (req, res) => {
             { upsert: true, new: true } 
           );
         }
-        res.status(200).json({ message: 'File data uploaded successfully, duplicates avoided' });
+        // res.status(200).json({ message: 'File data uploaded successfully, duplicates avoided' });
+        console.log('DONE');
       } catch (error) {
-        res.status(500).json({ message: 'Error saving data', error });
+        console.log('Error saving data');
       } finally {
         fs.unlinkSync(req.file.path);
       }
